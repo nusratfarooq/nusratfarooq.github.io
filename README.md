@@ -6,7 +6,6 @@ nav: home, CV, teaching, Publications (Op-eds, book chapters, research publicati
 
 ## inspo
 
-https://tgthorley.com
 https://www.mohamedzeeshan.com/
 https://www.tamarmitts.com/
 
