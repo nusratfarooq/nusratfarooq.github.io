@@ -1,0 +1,1128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bewley Math Camp — Lecture 1: Linear Algebra I</title>
+<style>
+  :root {
+    --navy: #0f1f3d;
+    --blue: #1a3a6b;
+    --accent: #2e7de0;
+    --gold: #e8a020;
+    --light-gold: #fef3dc;
+    --green: #1a7a4a;
+    --light-green: #d4f0e0;
+    --red: #c0392b;
+    --light-red: #fce8e6;
+    --bg: #f4f6fa;
+    --card: #ffffff;
+    --text: #1a1a2e;
+    --muted: #5a6680;
+    --border: #dde2ef;
+    --code-bg: #eef2fb;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Georgia', serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    font-size: 16px;
+  }
+  /* HEADER */
+  .header {
+    background: linear-gradient(135deg, var(--navy) 0%, var(--blue) 100%);
+    color: white;
+    padding: 32px 40px 24px;
+    border-bottom: 4px solid var(--gold);
+  }
+  .header-badge { font-family: 'Arial', sans-serif; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--gold); margin-bottom: 8px; }
+  .header h1 { font-size: 28px; font-weight: normal; margin-bottom: 6px; }
+  .header .subtitle { font-size: 15px; opacity: 0.75; font-style: italic; }
+  .progress-bar-wrap { margin-top: 16px; background: rgba(255,255,255,0.15); border-radius: 8px; height: 6px; }
+  .progress-bar { height: 6px; background: var(--gold); border-radius: 8px; transition: width 0.5s ease; }
+  .progress-label { font-size: 12px; opacity: 0.6; margin-top: 4px; font-family: Arial, sans-serif; }
+
+  /* NAV TABS */
+  .nav {
+    background: var(--card);
+    border-bottom: 2px solid var(--border);
+    padding: 0 40px;
+    display: flex;
+    gap: 4px;
+    overflow-x: auto;
+  }
+  .nav button {
+    padding: 14px 18px;
+    border: none;
+    background: none;
+    font-size: 13px;
+    font-family: Arial, sans-serif;
+    color: var(--muted);
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    margin-bottom: -2px;
+    white-space: nowrap;
+    transition: all 0.2s;
+  }
+  .nav button:hover { color: var(--accent); }
+  .nav button.active { color: var(--accent); border-bottom-color: var(--accent); font-weight: bold; }
+
+  /* MAIN CONTENT */
+  .main { max-width: 900px; margin: 0 auto; padding: 32px 24px 60px; }
+  .section { display: none; }
+  .section.active { display: block; }
+
+  /* CARDS */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 28px 32px;
+    margin-bottom: 24px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  }
+  .card-title {
+    font-size: 13px;
+    font-family: Arial, sans-serif;
+    font-weight: bold;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 14px;
+  }
+  h2 { font-size: 21px; color: var(--navy); margin-bottom: 12px; font-weight: normal; }
+  h3 { font-size: 17px; color: var(--blue); margin: 18px 0 10px; }
+  p { margin-bottom: 12px; }
+
+  /* HIGHLIGHT BOXES */
+  .box {
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin: 16px 0;
+    font-size: 15px;
+  }
+  .box.definition { background: #e8f0fe; border-left: 4px solid var(--accent); }
+  .box.theorem { background: var(--light-gold); border-left: 4px solid var(--gold); }
+  .box.example { background: var(--light-green); border-left: 4px solid var(--green); }
+  .box.warning { background: var(--light-red); border-left: 4px solid var(--red); }
+  .box.intuition { background: #f0e6ff; border-left: 4px solid #7c3aed; }
+  .box-label { font-family: Arial, sans-serif; font-size: 11px; font-weight: bold; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 6px; }
+  .box.definition .box-label { color: var(--accent); }
+  .box.theorem .box-label { color: #a06010; }
+  .box.example .box-label { color: var(--green); }
+  .box.warning .box-label { color: var(--red); }
+  .box.intuition .box-label { color: #7c3aed; }
+
+  /* MATH DISPLAY */
+  .math-block {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin: 14px 0;
+    font-family: 'Courier New', monospace;
+    font-size: 14px;
+    overflow-x: auto;
+    line-height: 1.8;
+  }
+  .math-block .comment { color: var(--muted); font-style: italic; }
+
+  /* VISUAL DIAGRAM */
+  .diagram-wrap { text-align: center; margin: 20px 0; }
+  .diagram-wrap svg { max-width: 100%; }
+
+  /* STEP-BY-STEP */
+  .steps { counter-reset: step; }
+  .step {
+    display: flex; gap: 16px; margin-bottom: 16px; align-items: flex-start;
+  }
+  .step-num {
+    min-width: 32px; height: 32px;
+    background: var(--accent); color: white;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: Arial, sans-serif; font-size: 13px; font-weight: bold;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+  .step-body { flex: 1; }
+  .step-body strong { color: var(--navy); }
+
+  /* QUIZ */
+  .quiz-q { font-size: 16px; margin-bottom: 16px; color: var(--navy); }
+  .quiz-options { display: grid; gap: 10px; }
+  .quiz-option {
+    background: var(--bg);
+    border: 2px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 18px;
+    cursor: pointer;
+    font-size: 15px;
+    transition: all 0.2s;
+    font-family: Georgia, serif;
+    text-align: left;
+  }
+  .quiz-option:hover { border-color: var(--accent); background: #e8f0fe; }
+  .quiz-option.correct { border-color: var(--green); background: var(--light-green); }
+  .quiz-option.wrong { border-color: var(--red); background: var(--light-red); }
+  .quiz-feedback { margin-top: 14px; padding: 14px; border-radius: 8px; display: none; font-size: 15px; }
+  .quiz-feedback.show { display: block; }
+  .quiz-feedback.correct-fb { background: var(--light-green); color: #0d5c34; border-left: 4px solid var(--green); }
+  .quiz-feedback.wrong-fb { background: var(--light-red); color: #8b1a12; border-left: 4px solid var(--red); }
+  .quiz-next { margin-top: 14px; display: none; }
+  .quiz-next.show { display: block; }
+
+  /* BUTTONS */
+  .btn {
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 20px;
+    font-size: 14px;
+    font-family: Arial, sans-serif;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .btn:hover { background: var(--navy); }
+  .btn.secondary { background: var(--card); color: var(--accent); border: 2px solid var(--accent); }
+  .btn.secondary:hover { background: #e8f0fe; }
+  .btn.gold { background: var(--gold); color: var(--navy); }
+
+  /* MATRIX VIS */
+  .matrix-table { border-collapse: collapse; margin: 8px auto; }
+  .matrix-table td {
+    width: 44px; height: 44px;
+    text-align: center;
+    font-size: 14px;
+    font-family: 'Courier New', monospace;
+    border: 1px solid var(--border);
+    background: var(--code-bg);
+  }
+  .matrix-table td.highlight { background: #fff0cc; border-color: var(--gold); font-weight: bold; }
+  .matrix-table td.pivot { background: #d4f0e0; border-color: var(--green); font-weight: bold; }
+  .matrix-table td.zero { color: var(--muted); }
+
+  /* INTERACTIVE GAUSS */
+  #gauss-system { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; }
+  .gauss-col { }
+  .gauss-col h4 { font-size: 13px; font-family: Arial, sans-serif; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); margin-bottom: 10px; }
+  .gauss-row { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; font-family: 'Courier New', monospace; font-size: 14px; background: var(--code-bg); border: 1px solid var(--border); border-radius: 6px; padding: 10px 14px; }
+  .gauss-row.pivot-row { background: var(--light-green); border-color: var(--green); }
+  .gauss-row.eliminated { background: #fff0cc; border-color: var(--gold); }
+
+  /* CONCEPT MAP */
+  .concept-map-wrap { overflow-x: auto; padding: 10px 0; }
+
+  /* SCORE */
+  .score-display { font-family: Arial, sans-serif; font-size: 15px; color: var(--muted); text-align: right; margin-bottom: 10px; }
+
+  /* SUMMARY TABLE */
+  .summary-table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 15px; }
+  .summary-table th { background: var(--navy); color: white; padding: 10px 14px; text-align: left; font-weight: normal; font-family: Arial, sans-serif; font-size: 13px; }
+  .summary-table td { padding: 10px 14px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  .summary-table tr:nth-child(even) td { background: var(--bg); }
+
+  /* ROADMAP */
+  .roadmap { display: flex; gap: 0; margin: 20px 0; overflow-x: auto; }
+  .roadmap-item { flex: 1; min-width: 130px; text-align: center; position: relative; }
+  .roadmap-item:not(:last-child)::after { content: '→'; position: absolute; right: -8px; top: 12px; color: var(--muted); font-size: 18px; }
+  .roadmap-box { background: var(--code-bg); border: 2px solid var(--border); border-radius: 8px; padding: 10px 8px; font-size: 13px; font-family: Arial, sans-serif; line-height: 1.4; }
+  .roadmap-box.done { background: var(--light-green); border-color: var(--green); }
+  .roadmap-box.current { background: #e8f0fe; border-color: var(--accent); font-weight: bold; }
+
+  /* RESPONSIVE */
+  @media (max-width: 600px) {
+    .header { padding: 20px; }
+    .main { padding: 16px 12px 40px; }
+    .card { padding: 18px 16px; }
+    #gauss-system { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-badge">Yale Econ Math Camp · Bewley Notes 2020</div>
+  <h1>Lecture 1: Linear Algebra I</h1>
+  <div class="subtitle">Simultaneous equations, matrices, vector spaces, independence, and bases</div>
+  <div class="progress-bar-wrap">
+    <div class="progress-bar" id="progress-bar" style="width:12%"></div>
+  </div>
+  <div class="progress-label" id="progress-label">Section 1 of 8 · Overview</div>
+</div>
+
+<div class="nav">
+  <button class="active" onclick="goTo(0)">📍 Overview</button>
+  <button onclick="goTo(1)">① Gaussian Elimination</button>
+  <button onclick="goTo(2)">② Matrix Notation</button>
+  <button onclick="goTo(3)">③ Row Operations</button>
+  <button onclick="goTo(4)">④ Vector Spaces</button>
+  <button onclick="goTo(5)">⑤ Independence &amp; Bases</button>
+  <button onclick="goTo(6)">⑥ Rank Theorem</button>
+  <button onclick="goTo(7)">✅ Quiz Me</button>
+</div>
+
+<div class="main">
+
+<!-- ===== SECTION 0: OVERVIEW ===== -->
+<div class="section active" id="sec0">
+  <div class="card">
+    <div class="card-title">What this lecture is about</div>
+    <h2>The Big Picture: Linear Algebra as the Language of Econ</h2>
+    <p>Linear algebra is the foundation of virtually everything in PhD-level economics: optimization, equilibrium systems, comparative statics, econometrics. Bewley starts here for a reason — you can't do real analysis or trade theory without these tools.</p>
+    <div class="box intuition">
+      <div class="box-label">🎯 Core Intuition</div>
+      Every major concept in Lecture 1 answers a single question: <strong>When does a system of equations have a solution, and what does the space of solutions look like?</strong>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Lecture 1 Roadmap</div>
+    <div class="roadmap">
+      <div class="roadmap-item"><div class="roadmap-box current">Solve<br>Equations<br><small>Gauss</small></div></div>
+      <div class="roadmap-item"><div class="roadmap-box">Matrix<br>Notation<br><small>Ax=y</small></div></div>
+      <div class="roadmap-item"><div class="roadmap-box">Row<br>Ops<br><small>Equiv.</small></div></div>
+      <div class="roadmap-item"><div class="roadmap-box">Vector<br>Spaces<br><small>ℝᴺ</small></div></div>
+      <div class="roadmap-item"><div class="roadmap-box">Linear<br>Indep.<br><small>Bases</small></div></div>
+      <div class="roadmap-item"><div class="roadmap-box">Rank<br>Theorem<br><small>col=row</small></div></div>
+    </div>
+    <p style="color:var(--muted); font-size:14px;">Each concept builds on the last. We go from "how to solve 2 equations" all the way to a deep theorem about the structure of any matrix.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Why this matters for Econ</div>
+    <table class="summary-table">
+      <tr><th>Econ Concept</th><th>Linear Algebra Tool</th></tr>
+      <tr><td>Market equilibrium (find prices clearing all markets)</td><td>Solve Ax = y</td></tr>
+      <tr><td>OLS regression (find β̂)</td><td>Matrix inverse / rank</td></tr>
+      <tr><td>Comparative statics (how does equilibrium change?)</td><td>Linear transformations</td></tr>
+      <tr><td>Dimensionality of solution set</td><td>Null space / basis</td></tr>
+      <tr><td>Identification in econometrics</td><td>Column rank</td></tr>
+    </table>
+    <button class="btn" onclick="goTo(1)">Start Lecture →</button>
+  </div>
+</div>
+
+<!-- ===== SECTION 1: GAUSSIAN ELIMINATION ===== -->
+<div class="section" id="sec1">
+  <div class="card">
+    <div class="card-title">Topic 1</div>
+    <h2>Simultaneous Linear Equations & Gaussian Elimination</h2>
+    <p>Bewley begins with the most concrete possible question: how do you find x₁ and x₂ satisfying two equations at once?</p>
+
+    <div class="box example">
+      <div class="box-label">📘 Bewley's Opening Example</div>
+      <div class="math-block">
+        x₁ + 7x₂ = −57   … (eq 1)
+       12x₁ + 3x₂ =  45   … (eq 2)
+      </div>
+      <p>The idea: eliminate x₁ from equation 2 by computing <strong>4×(eq1) − (1/3)×(eq2)</strong>:</p>
+      <div class="math-block">
+        4x₁ + 28x₂ = −228
+       −(4x₁ +  x₂ =   15)
+        ─────────────────────
+              27x₂ = −243   →  x₂ = −9
+
+        Then:  x₁ = −7(−9) − 57 = 63 − 57 = 6
+      </div>
+    </div>
+
+    <div class="box intuition">
+      <div class="box-label">🧠 Visual Intuition</div>
+      Each equation is a <strong>line</strong> in 2D space. Solving simultaneously = finding their intersection point. In higher dimensions (N unknowns), each equation is a <em>hyperplane</em>. The solution is where all hyperplanes meet.
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">The General Algorithm</div>
+    <h2>Gaussian Elimination: The General Recipe</h2>
+    <p>For M equations in N unknowns (equation 1.1 in the notes), the algorithm is:</p>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-body"><strong>Find the pivot column.</strong> Find the leftmost column with a non-zero entry (column n₁). Swap rows so the non-zero entry is on top.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-body"><strong>Scale the pivot row.</strong> Divide by the leading entry so it becomes 1. This is the pivot.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-body"><strong>Eliminate the column.</strong> For every other row m, subtract aₘₙ₁ × (pivot row) from row m, making all other entries in column n₁ equal to 0.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-body"><strong>Recurse.</strong> Ignore the pivot row and repeat steps 1–3 on the remaining rows. Stop when no more non-zero rows exist.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">5</div>
+        <div class="step-body"><strong>Read off solutions.</strong> Free variables (non-pivot columns) can be set arbitrarily. Pivot variables are determined by formula (1.2) in the notes.</div>
+      </div>
+    </div>
+
+    <div class="box definition">
+      <div class="box-label">📌 Result: When does a solution exist?</div>
+      After elimination, if any row has the form <code>0 = yₖ</code> with yₖ ≠ 0, there is <strong>no solution</strong>. Otherwise, solutions exist and the free variables (N − K of them, where K = number of pivots) can be set freely.
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Interactive Visualization</div>
+    <h2>Watch Elimination Step-by-Step</h2>
+    <p>Click through the elimination process on Bewley's 3×3 example: <code>A = [[3,2,1],[6,4,2],[6,8,5]]</code></p>
+    <div id="gauss-vis"></div>
+    <div style="margin-top:14px; display:flex; gap:10px; flex-wrap:wrap;">
+      <button class="btn" id="gauss-prev" onclick="gaussStep(-1)" disabled>← Previous</button>
+      <button class="btn" id="gauss-next" onclick="gaussStep(1)">Next Step →</button>
+      <button class="btn secondary" onclick="gaussReset()">Reset</button>
+    </div>
+    <div id="gauss-desc" class="box example" style="margin-top:16px;">
+      <div class="box-label">Step Description</div>
+      <span id="gauss-desc-text">Initial matrix. The goal is to reach Row Reduced Echelon Form.</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Key Lemma</div>
+    <div class="box theorem">
+      <div class="box-label">⭐ Lemma 1.1 (Critical for PhD Econ!)</div>
+      <p><strong>If M &lt; N and y = 0, then Ax = 0 has a non-zero solution.</strong></p>
+      <p><em>Translation:</em> Fewer equations than unknowns → you always have a non-trivial solution (the solution isn't just x = 0). In econ: if you have fewer constraints than free variables, the system is <em>under-determined</em> — many equilibria exist.</p>
+    </div>
+  </div>
+
+  <div style="text-align:right; margin-top:8px;">
+    <button class="btn" onclick="goTo(2)">Next: Matrix Notation →</button>
+  </div>
+</div>
+
+<!-- ===== SECTION 2: MATRIX NOTATION ===== -->
+<div class="section" id="sec2">
+  <div class="card">
+    <div class="card-title">Topic 2</div>
+    <h2>Matrix Representation of Linear Equations</h2>
+    <p>Writing out equations one by one gets cumbersome fast. Matrices give us a clean notation. The M equations in N unknowns:</p>
+    <div class="math-block">
+      a₁₁x₁ + a₁₂x₂ + ⋯ + a₁ₙxₙ = y₁
+      a₂₁x₁ + a₂₂x₂ + ⋯ + a₂ₙxₙ = y₂
+                ⋮
+      aₘ₁x₁ + aₘ₂x₂ + ⋯ + aₘₙxₙ = yₙ
+    </div>
+    <p>become the single compact equation:</p>
+    <div class="math-block" style="font-size:18px; text-align:center; padding:20px;">
+      <strong>Ax = y</strong>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Visual: How Matrix Multiplication Works</div>
+    <div class="diagram-wrap">
+      <svg viewBox="0 0 680 200" xmlns="http://www.w3.org/2000/svg" style="max-width:680px;">
+        <!-- Matrix A -->
+        <rect x="20" y="30" width="240" height="140" rx="6" fill="#eef2fb" stroke="#2e7de0" stroke-width="1.5"/>
+        <text x="44" y="20" font-family="Arial" font-size="12" fill="#5a6680">M×N matrix A</text>
+        <!-- Row 1 -->
+        <text x="40" y="75" font-family="Courier New" font-size="13" fill="#1a1a2e">a₁₁  a₁₂  …  a₁ₙ</text>
+        <text x="40" y="105" font-family="Courier New" font-size="13" fill="#1a1a2e">a₂₁  a₂₂  …  a₂ₙ</text>
+        <text x="40" y="130" font-family="Courier New" font-size="13" fill="#5a6680"> ⋮    ⋮       ⋮</text>
+        <text x="40" y="155" font-family="Courier New" font-size="13" fill="#1a1a2e">aₘ₁  aₘ₂  …  aₘₙ</text>
+
+        <!-- × -->
+        <text x="268" y="108" font-family="Georgia" font-size="24" fill="#2e7de0">×</text>
+
+        <!-- Vector x -->
+        <rect x="292" y="55" width="70" height="100" rx="6" fill="#d4f0e0" stroke="#1a7a4a" stroke-width="1.5"/>
+        <text x="318" y="43" font-family="Arial" font-size="12" fill="#5a6680">x (N×1)</text>
+        <text x="308" y="88" font-family="Courier New" font-size="13" fill="#1a1a2e">x₁</text>
+        <text x="308" y="108" font-family="Courier New" font-size="13" fill="#1a1a2e">x₂</text>
+        <text x="308" y="124" font-family="Courier New" font-size="13" fill="#5a6680">⋮</text>
+        <text x="308" y="142" font-family="Courier New" font-size="13" fill="#1a1a2e">xₙ</text>
+
+        <!-- = -->
+        <text x="370" y="108" font-family="Georgia" font-size="24" fill="#2e7de0">=</text>
+
+        <!-- Vector y -->
+        <rect x="400" y="55" width="70" height="100" rx="6" fill="#fef3dc" stroke="#e8a020" stroke-width="1.5"/>
+        <text x="424" y="43" font-family="Arial" font-size="12" fill="#5a6680">y (M×1)</text>
+        <text x="416" y="88" font-family="Courier New" font-size="13" fill="#1a1a2e">y₁</text>
+        <text x="416" y="108" font-family="Courier New" font-size="13" fill="#1a1a2e">y₂</text>
+        <text x="416" y="124" font-family="Courier New" font-size="13" fill="#5a6680">⋮</text>
+        <text x="416" y="142" font-family="Courier New" font-size="13" fill="#1a1a2e">yₘ</text>
+
+        <!-- annotation -->
+        <text x="490" y="75" font-family="Arial" font-size="12" fill="#5a6680">Row 1 of A · x = y₁</text>
+        <text x="490" y="105" font-family="Arial" font-size="12" fill="#5a6680">= a₁₁x₁+a₁₂x₂+…+a₁ₙxₙ</text>
+        <text x="490" y="135" font-family="Arial" font-size="12" fill="#5a6680">Each row of A "dots" x</text>
+        <text x="490" y="155" font-family="Arial" font-size="12" fill="#5a6680">to give one entry of y</text>
+      </svg>
+    </div>
+    <div class="box intuition">
+      <div class="box-label">🧠 How to Think About It</div>
+      The entry y₁ is the <em>dot product</em> of row 1 of A with x. Think of each row as a constraint — a hyperplane in N-dimensional space. The system Ax = y asks: where is the unique point (or set of points) satisfying ALL constraints simultaneously?
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Row Reduced Echelon Form (RREF)</div>
+    <h2>The Goal of Elimination: RREF</h2>
+    <div class="box definition">
+      <div class="box-label">📌 Definition: Row Reduced Matrix</div>
+      A matrix is <strong>row reduced</strong> if: (a) the first non-zero entry in any row is 1 (the <em>leading entry</em>), and (b) each column containing a leading entry has all other entries equal to 0.
+    </div>
+    <div class="box definition">
+      <div class="box-label">📌 Definition: Row Reduced Echelon Matrix (RREF)</div>
+      A row reduced matrix where: (a) all zero rows are at the bottom, and (b) the leading entries move strictly right as you go down (n₁ &lt; n₂ &lt; … &lt; nₖ).
+    </div>
+
+    <h3>Visual: What RREF looks like</h3>
+    <div class="diagram-wrap">
+      <table class="matrix-table">
+        <tr>
+          <td class="pivot">1</td><td class="zero">0</td><td class="highlight">3</td>
+        </tr>
+        <tr>
+          <td class="zero">0</td><td class="pivot">1</td><td class="highlight">4</td>
+        </tr>
+        <tr>
+          <td class="zero">0</td><td class="zero">0</td><td class="zero">0</td>
+        </tr>
+      </table>
+    </div>
+    <p style="text-align:center; color:var(--muted); font-size:13px; margin-top:8px;">Green = pivots (leading 1s). Yellow = free variable columns. This is Bewley's example from the notes.</p>
+
+    <div class="box example">
+      <div class="box-label">📘 Reading Solutions from RREF</div>
+      With the matrix above and Bx = 0: columns 1 and 2 are pivot columns, column 3 is free. Setting x₃ = t (any number): x₂ = −4t, x₁ = −3t. The full solution is <code>x = t(−3, −4, 1)</code> for any t ∈ ℝ. That's a <em>line</em> through the origin.
+    </div>
+
+    <div class="box theorem">
+      <div class="box-label">⭐ Lemma 1.3</div>
+      Every matrix is row equivalent to a row reduced echelon matrix. (Proof: Gaussian elimination always terminates and produces RREF.)
+    </div>
+  </div>
+
+  <div style="text-align:right; margin-top:8px;">
+    <button class="btn" onclick="goTo(3)">Next: Row Operations →</button>
+  </div>
+</div>
+
+<!-- ===== SECTION 3: ROW OPERATIONS ===== -->
+<div class="section" id="sec3">
+  <div class="card">
+    <div class="card-title">Topic 3</div>
+    <h2>Elementary Row Operations & Row Equivalence</h2>
+    <p>Bewley formalizes the operations we used in Gaussian elimination. These are the "legal moves" that don't change the solution set.</p>
+
+    <div class="box definition">
+      <div class="box-label">📌 The Three Elementary Row Operations</div>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num" style="background:var(--green);">a</div>
+          <div class="step-body"><strong>Scale:</strong> Multiply any row by a non-zero number c. <br><small style="color:var(--muted);">Example: R₁ → 3R₁</small></div>
+        </div>
+        <div class="step">
+          <div class="step-num" style="background:var(--gold); color:var(--navy);">b</div>
+          <div class="step-body"><strong>Swap:</strong> Interchange two rows. <br><small style="color:var(--muted);">Example: R₁ ↔ R₂</small></div>
+        </div>
+        <div class="step">
+          <div class="step-num" style="background:var(--red);">c</div>
+          <div class="step-body"><strong>Add:</strong> Replace a row by itself plus c times another row (c ≠ 0). <br><small style="color:var(--muted);">Example: R₂ → R₂ − 2R₁ (this is the key elimination step)</small></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="box definition">
+      <div class="box-label">📌 Definition: Row Equivalence</div>
+      Matrices A and B are <strong>row equivalent</strong> if B can be obtained from A by a finite sequence of elementary row operations.
+    </div>
+
+    <div class="box theorem">
+      <div class="box-label">⭐ Lemma 1.2 (Why This Is Safe)</div>
+      If A and B are row equivalent, the equations <strong>Ax = 0</strong> and <strong>Bx = 0 have the same solutions</strong>. <br><br>
+      <em>Why this matters:</em> This guarantees that Gaussian elimination doesn't "lose" or "create" solutions. Every step is reversible — it's like doing legal algebraic manipulations on both sides of an equation.
+    </div>
+
+    <div class="box intuition">
+      <div class="box-label">🧠 The Augmented Matrix Trick</div>
+      To solve Ax = y (not just Ax = 0), we form the <strong>augmented matrix</strong> (A : y) — append y as an extra column. Then apply row operations to (A : y). The same lemma guarantees we haven't changed the solution set. This is the standard algorithm taught in undergrad linear algebra.
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Key Theorem from this Section</div>
+    <div class="box theorem">
+      <div class="box-label">⭐ Theorem 1.4</div>
+      If A is an M×N matrix with <strong>M &lt; N</strong> (fewer rows than columns), then Ax = 0 has a <strong>non-zero solution</strong>.
+    </div>
+    <div class="box theorem">
+      <div class="box-label">⭐ Corollary 1.5</div>
+      If A is an N×N (square) matrix and Ax = 0 has NO non-zero solution, then A is row equivalent to the N×N <strong>identity matrix</strong> I.
+    </div>
+    <div class="box intuition">
+      <div class="box-label">🧠 Economic Translation</div>
+      Corollary 1.5 is the key to <em>invertibility</em>. If a square system of equations has a unique solution (only x = 0 solves the homogeneous system), then the matrix is invertible — meaning there's a unique solution for ANY right-hand side y. In econ: a square system of market-clearing conditions with a unique equilibrium corresponds to an invertible matrix.
+    </div>
+  </div>
+
+  <div style="text-align:right; margin-top:8px;">
+    <button class="btn" onclick="goTo(4)">Next: Vector Spaces →</button>
+  </div>
+</div>
+
+<!-- ===== SECTION 4: VECTOR SPACES ===== -->
+<div class="section" id="sec4">
+  <div class="card">
+    <div class="card-title">Topic 4</div>
+    <h2>Vector Spaces</h2>
+    <p>Now Bewley steps back and abstracts. Instead of thinking only about ℝᴺ (N-tuples of real numbers), he defines the general concept of a <em>vector space</em> — any set with addition and scalar multiplication that obeys 10 rules.</p>
+
+    <div class="box definition">
+      <div class="box-label">📌 Definition: Vector Space</div>
+      A <strong>vector space</strong> V is a non-empty set with operations <em>addition</em> (v + w) and <em>scalar multiplication</em> (cv) satisfying 10 axioms: closure under both operations, commutativity, associativity, zero vector, additive inverse, and distributive laws.
+    </div>
+
+    <div class="diagram-wrap">
+      <svg viewBox="0 0 640 280" xmlns="http://www.w3.org/2000/svg" style="max-width:640px;">
+        <!-- Title -->
+        <text x="320" y="22" font-family="Arial" font-size="13" fill="#5a6680" text-anchor="middle">Examples of Vector Spaces</text>
+
+        <!-- ℝ² box -->
+        <rect x="20" y="35" width="175" height="220" rx="10" fill="#e8f0fe" stroke="#2e7de0" stroke-width="1.5"/>
+        <text x="107" y="58" font-family="Arial" font-size="13" font-weight="bold" fill="#1a3a6b" text-anchor="middle">ℝ² (pairs of numbers)</text>
+        <!-- axes -->
+        <line x1="60" y1="160" x2="170" y2="160" stroke="#aaa" stroke-width="1"/>
+        <line x1="107" y1="80" x2="107" y2="230" stroke="#aaa" stroke-width="1"/>
+        <!-- vector v -->
+        <line x1="107" y1="160" x2="155" y2="105" stroke="#2e7de0" stroke-width="2.5" marker-end="url(#arrow-b)"/>
+        <text x="158" y="100" font-family="Courier New" font-size="12" fill="#2e7de0">v=(3,4)</text>
+        <!-- vector w -->
+        <line x1="107" y1="160" x2="75" y2="115" stroke="#1a7a4a" stroke-width="2.5" marker-end="url(#arrow-g)"/>
+        <text x="40" y="110" font-family="Courier New" font-size="12" fill="#1a7a4a">w=(−2,3)</text>
+        <!-- v+w -->
+        <line x1="107" y1="160" x2="123" y2="71" stroke="#e8a020" stroke-width="2" stroke-dasharray="4,3" marker-end="url(#arrow-y)"/>
+        <text x="126" y="65" font-family="Courier New" font-size="11" fill="#a06010">v+w=(1,7)</text>
+
+        <!-- ℝᴺ box -->
+        <rect x="215" y="35" width="185" height="220" rx="10" fill="#d4f0e0" stroke="#1a7a4a" stroke-width="1.5"/>
+        <text x="308" y="58" font-family="Arial" font-size="13" font-weight="bold" fill="#0d5c34" text-anchor="middle">ℝᴺ (N-tuples)</text>
+        <text x="308" y="85" font-family="Courier New" font-size="12" fill="#1a7a4a" text-anchor="middle">v = (v₁, v₂, …, vₙ)</text>
+        <text x="308" y="120" font-family="Arial" font-size="11" fill="#5a6680" text-anchor="middle">Addition:</text>
+        <text x="308" y="140" font-family="Courier New" font-size="11" fill="#1a1a2e" text-anchor="middle">v+w = (v₁+w₁, …, vₙ+wₙ)</text>
+        <text x="308" y="175" font-family="Arial" font-size="11" fill="#5a6680" text-anchor="middle">Scalar mult:</text>
+        <text x="308" y="195" font-family="Courier New" font-size="11" fill="#1a1a2e" text-anchor="middle">cv = (cv₁, cv₂, …, cvₙ)</text>
+        <text x="308" y="230" font-family="Arial" font-size="11" fill="#0d5c34" text-anchor="middle">This is the main example.</text>
+
+        <!-- Subspace box -->
+        <rect x="420" y="35" width="195" height="220" rx="10" fill="#fef3dc" stroke="#e8a020" stroke-width="1.5"/>
+        <text x="517" y="58" font-family="Arial" font-size="13" font-weight="bold" fill="#a06010" text-anchor="middle">Subspace of ℝ²</text>
+        <text x="517" y="78" font-family="Arial" font-size="11" fill="#5a6680" text-anchor="middle">{ (v₁,v₂) | v₁+v₂=0 }</text>
+        <!-- number line through origin -->
+        <line x1="440" y1="200" x2="595" y2="80" stroke="#e8a020" stroke-width="2"/>
+        <circle cx="517" cy="140" r="4" fill="#e8a020"/>
+        <text x="524" y="135" font-family="Arial" font-size="11" fill="#a06010">origin</text>
+        <!-- vector on line -->
+        <line x1="517" y1="140" x2="557" y2="113" stroke="#c0392b" stroke-width="2" marker-end="url(#arrow-r)"/>
+        <text x="562" y="110" font-family="Courier New" font-size="11" fill="#c0392b">(2,−2)</text>
+        <text x="440" y="240" font-family="Arial" font-size="11" fill="#a06010" text-anchor="middle">A line through 0.</text>
+        <text x="440" y="255" font-family="Arial" font-size="11" fill="#a06010" text-anchor="middle">Closed under + and cv.</text>
+
+        <!-- Arrowheads -->
+        <defs>
+          <marker id="arrow-b" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#2e7de0"/></marker>
+          <marker id="arrow-g" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#1a7a4a"/></marker>
+          <marker id="arrow-y" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#e8a020"/></marker>
+          <marker id="arrow-r" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#c0392b"/></marker>
+        </defs>
+      </svg>
+    </div>
+
+    <div class="box definition">
+      <div class="box-label">📌 Definition: Subspace</div>
+      W is a <strong>subspace</strong> of V if W ⊆ V and W is itself a vector space under V's operations. <em>Quick check:</em> W is a subspace iff it's non-empty and closed under addition and scalar multiplication (i.e., v + w ∈ W and cv ∈ W for all v, w ∈ W and all scalars c).
+    </div>
+
+    <div class="box warning">
+      <div class="box-label">⚠️ Common Mistake</div>
+      A subspace <strong>must contain the zero vector</strong>. The set {(v₁, v₂) | v₁ + v₂ = 1} is NOT a subspace (it doesn't contain (0,0) and isn't closed under addition). Bewley's example {(v₁, v₂) | v₁ + v₂ = 0} IS a subspace because it passes through the origin.
+    </div>
+  </div>
+
+  <div style="text-align:right; margin-top:8px;">
+    <button class="btn" onclick="goTo(5)">Next: Independence & Bases →</button>
+  </div>
+</div>
+
+<!-- ===== SECTION 5: INDEPENDENCE & BASES ===== -->
+<div class="section" id="sec5">
+  <div class="card">
+    <div class="card-title">Topic 5 — The Core of Lecture 1</div>
+    <h2>Linear Independence, Spanning, and Bases</h2>
+    <p>These concepts answer: what is the "minimal structure" needed to describe a vector space?</p>
+
+    <div class="box definition">
+      <div class="box-label">📌 Definitions</div>
+      <p><strong>Linear Combination:</strong> v = c₁v₁ + c₂v₂ + ⋯ + cₙvₙ for some scalars cₙ.</p>
+      <p><strong>Span:</strong> The set of ALL linear combinations of v₁, …, vₙ. (It's always a subspace.)</p>
+      <p><strong>Spanning Set:</strong> v₁, …, vₙ span V if every vector in V is a linear combination of them.</p>
+      <p><strong>Linearly Dependent:</strong> v₁, …, vₙ are dependent if ∃ scalars c₁, …, cₙ (not all 0) with c₁v₁ + ⋯ + cₙvₙ = 0.</p>
+      <p><strong>Linearly Independent:</strong> Not dependent. The ONLY way c₁v₁ + ⋯ + cₙvₙ = 0 is cₖ = 0 for all k.</p>
+      <p><strong>Basis:</strong> A set of <em>independent</em> vectors that <em>span</em> V.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Visual: Independence vs. Dependence</div>
+    <div class="diagram-wrap">
+      <svg viewBox="0 0 640 260" xmlns="http://www.w3.org/2000/svg" style="max-width:640px;">
+        <!-- LEFT: INDEPENDENT -->
+        <text x="155" y="20" font-family="Arial" font-size="13" font-weight="bold" fill="#1a7a4a" text-anchor="middle">INDEPENDENT ✓</text>
+        <text x="155" y="38" font-family="Arial" font-size="11" fill="#5a6680" text-anchor="middle">e₁=(1,0), e₂=(0,1) in ℝ²</text>
+        <!-- axes -->
+        <line x1="50" y1="155" x2="260" y2="155" stroke="#ddd" stroke-width="1"/>
+        <line x1="155" y1="60" x2="155" y2="250" stroke="#ddd" stroke-width="1"/>
+        <!-- e1 -->
+        <line x1="155" y1="155" x2="235" y2="155" stroke="#2e7de0" stroke-width="3" marker-end="url(#arr2)"/>
+        <text x="238" y="152" font-family="Courier New" font-size="12" fill="#2e7de0">e₁</text>
+        <!-- e2 -->
+        <line x1="155" y1="155" x2="155" y2="85" stroke="#1a7a4a" stroke-width="3" marker-end="url(#arr3)"/>
+        <text x="158" y="80" font-family="Courier New" font-size="12" fill="#1a7a4a">e₂</text>
+        <!-- can't make one from other -->
+        <text x="60" y="238" font-family="Arial" font-size="11" fill="#1a7a4a">Neither is a multiple of the other.</text>
+        <text x="60" y="253" font-family="Arial" font-size="11" fill="#1a7a4a">They point in different directions.</text>
+
+        <!-- RIGHT: DEPENDENT -->
+        <text x="490" y="20" font-family="Arial" font-size="13" font-weight="bold" fill="#c0392b" text-anchor="middle">DEPENDENT ✗</text>
+        <text x="490" y="38" font-family="Arial" font-size="11" fill="#5a6680" text-anchor="middle">(1,0),(0,1),(1,1) in ℝ²</text>
+        <!-- axes -->
+        <line x1="390" y1="155" x2="600" y2="155" stroke="#ddd" stroke-width="1"/>
+        <line x1="490" y1="60" x2="490" y2="250" stroke="#ddd" stroke-width="1"/>
+        <!-- v1 -->
+        <line x1="490" y1="155" x2="570" y2="155" stroke="#2e7de0" stroke-width="2.5" marker-end="url(#arr4)"/>
+        <text x="573" y="152" font-family="Courier New" font-size="11" fill="#2e7de0">v₁</text>
+        <!-- v2 -->
+        <line x1="490" y1="155" x2="490" y2="85" stroke="#1a7a4a" stroke-width="2.5" marker-end="url(#arr5)"/>
+        <text x="493" y="80" font-family="Courier New" font-size="11" fill="#1a7a4a">v₂</text>
+        <!-- v3 -->
+        <line x1="490" y1="155" x2="560" y2="95" stroke="#c0392b" stroke-width="2.5" stroke-dasharray="5,3" marker-end="url(#arr6)"/>
+        <text x="563" y="90" font-family="Courier New" font-size="11" fill="#c0392b">v₃</text>
+        <!-- dependency equation -->
+        <rect x="385" y="215" width="220" height="38" rx="4" fill="#fce8e6"/>
+        <text x="495" y="232" font-family="Courier New" font-size="12" fill="#c0392b" text-anchor="middle">v₃ = v₁ + v₂</text>
+        <text x="495" y="248" font-family="Arial" font-size="11" fill="#c0392b" text-anchor="middle">v₃ lies IN the span of v₁,v₂</text>
+
+        <defs>
+          <marker id="arr2" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#2e7de0"/></marker>
+          <marker id="arr3" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#1a7a4a"/></marker>
+          <marker id="arr4" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#2e7de0"/></marker>
+          <marker id="arr5" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#1a7a4a"/></marker>
+          <marker id="arr6" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#c0392b"/></marker>
+        </defs>
+      </svg>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Key Theorems on Bases & Dimension</div>
+
+    <div class="box theorem">
+      <div class="box-label">⭐ Theorem 1.6 — The Spanning Bound</div>
+      If v₁,…,vₘ <em>span</em> V, then any independent set in V has <strong>at most M elements</strong>. <br>
+      <em>Proof idea:</em> If you had N > M independent vectors w₁,…,wₙ, you could write each wₙ as a linear combination of the vₘ's. That gives an M × N coefficient matrix with M &lt; N, so by Lemma 1.1, there's a non-trivial linear combination of the wₙ's equaling zero — contradicting independence.
+    </div>
+
+    <div class="box theorem">
+      <div class="box-label">⭐ Corollary 1.7 — Dimension is Well-Defined</div>
+      Any two bases of a finite-dimensional vector space have the <strong>same number of elements</strong>. This number is the <em>dimension</em> of V, written dim V.
+    </div>
+
+    <div class="box intuition">
+      <div class="box-label">🧠 Why This Matters</div>
+      Dimension is THE fundamental invariant of a vector space. ℝ³ has dimension 3 no matter which basis you use — whether you use {e₁,e₂,e₃} or three other independent vectors. In econ, the dimension of the solution set to Ax = 0 (called the <em>null space</em>) tells you exactly how many "degrees of freedom" you have — how many free parameters exist in the system.
+    </div>
+
+    <div class="box theorem">
+      <div class="box-label">⭐ Corollaries 1.8, 1.11 — The "Two out of Three" Rule</div>
+      In a vector space of dimension N: any set of N vectors that (a) <em>spans</em> V is automatically independent (= a basis), or (b) is <em>independent</em> automatically spans V (= a basis). <br>You only need to check ONE of the two conditions when you already know you have exactly N vectors.
+    </div>
+
+    <div class="box theorem">
+      <div class="box-label">⭐ Theorem 1.15 — Unique Representation</div>
+      If v₁,…,vₙ is a basis for V, every vector v ∈ V can be written <em>uniquely</em> as v = c₁v₁ + ⋯ + cₙvₙ. The numbers c₁,…,cₙ are the <em>coordinates</em> of v in this basis.
+    </div>
+    <div class="box intuition">
+      <div class="box-label">🧠 Why Theorem 1.15 is Powerful</div>
+      This says every finite-dimensional vector space "looks just like ℝᴺ" once you fix a basis. The abstract space V is completely captured by N numbers. This is why economists can freely work in coordinate space without loss of generality.
+    </div>
+  </div>
+
+  <div style="text-align:right; margin-top:8px;">
+    <button class="btn" onclick="goTo(6)">Next: Rank Theorem →</button>
+  </div>
+</div>
+
+<!-- ===== SECTION 6: RANK ===== -->
+<div class="section" id="sec6">
+  <div class="card">
+    <div class="card-title">Topic 6 — The Capstone of Lecture 1</div>
+    <h2>Row Space, Column Space, and the Rank Theorem</h2>
+
+    <div class="box definition">
+      <div class="box-label">📌 Definitions</div>
+      For an M×N matrix A:
+      <ul style="margin:8px 0 0 20px; line-height:2;">
+        <li><strong>Row space:</strong> span of the rows of A (a subspace of ℝᴺ)</li>
+        <li><strong>Column space:</strong> span of the columns of A (a subspace of ℝᴹ)</li>
+        <li><strong>Row rank:</strong> dim(row space)</li>
+        <li><strong>Column rank:</strong> dim(column space)</li>
+      </ul>
+    </div>
+
+    <div class="diagram-wrap">
+      <svg viewBox="0 0 640 220" xmlns="http://www.w3.org/2000/svg" style="max-width:640px;">
+        <!-- matrix -->
+        <rect x="30" y="40" width="230" height="140" rx="8" fill="#eef2fb" stroke="#2e7de0" stroke-width="1.5"/>
+        <text x="145" y="25" font-family="Arial" font-size="13" fill="#5a6680" text-anchor="middle">M×N matrix A</text>
+        <!-- rows highlighted -->
+        <rect x="35" y="48" width="220" height="28" rx="4" fill="#d4f0e0" opacity="0.8"/>
+        <rect x="35" y="82" width="220" height="28" rx="4" fill="#d4f0e0" opacity="0.5"/>
+        <rect x="35" y="116" width="220" height="28" rx="4" fill="#d4f0e0" opacity="0.3"/>
+        <text x="145" y="66" font-family="Courier New" font-size="12" fill="#0d5c34" text-anchor="middle">— row 1 → (N-vector)</text>
+        <text x="145" y="100" font-family="Courier New" font-size="12" fill="#0d5c34" text-anchor="middle">— row 2 → (N-vector)</text>
+        <text x="145" y="134" font-family="Courier New" font-size="12" fill="#0d5c34" text-anchor="middle">— row M → (N-vector)</text>
+        <!-- col highlight -->
+        <rect x="35" y="48" width="55" height="132" rx="4" fill="#e8a020" opacity="0.25"/>
+        <text x="62" y="155" font-family="Courier New" font-size="11" fill="#a06010" text-anchor="middle">col 1</text>
+
+        <!-- arrows -->
+        <path d="M265,100 Q310,80 340,70" stroke="#1a7a4a" stroke-width="2" fill="none" marker-end="url(#arr-gr)"/>
+        <text x="345" y="68" font-family="Arial" font-size="12" fill="#1a7a4a">Row Space ⊆ ℝᴺ</text>
+        <text x="345" y="84" font-family="Arial" font-size="11" fill="#5a6680">dim = row rank</text>
+
+        <path d="M265,120 Q310,150 340,160" stroke="#a06010" stroke-width="2" fill="none" marker-end="url(#arr-go)"/>
+        <text x="345" y="158" font-family="Arial" font-size="12" fill="#a06010">Column Space ⊆ ℝᴹ</text>
+        <text x="345" y="174" font-family="Arial" font-size="11" fill="#5a6680">dim = column rank</text>
+
+        <!-- THE BIG THEOREM -->
+        <rect x="340" y="95" width="275" height="48" rx="8" fill="#fff0cc" stroke="#e8a020" stroke-width="2"/>
+        <text x="477" y="114" font-family="Arial" font-size="12" font-weight="bold" fill="#a06010" text-anchor="middle">Theorem 1.18</text>
+        <text x="477" y="132" font-family="Arial" font-size="13" fill="#0f1f3d" text-anchor="middle">Row rank = Column rank = rank(A)</text>
+
+        <defs>
+          <marker id="arr-gr" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#1a7a4a"/></marker>
+          <marker id="arr-go" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#a06010"/></marker>
+        </defs>
+      </svg>
+    </div>
+
+    <div class="box theorem">
+      <div class="box-label">⭐ Theorem 1.18 — The Rank Theorem (Major Result!)</div>
+      For any matrix A, <strong>row rank = column rank</strong>. We call this common number the <em>rank</em> of A. <br><br>
+      <em>Proof strategy:</em> Reduce A to RREF (call it B). Lemmas 1.16 and 1.17 show row equivalence preserves both row rank and column rank. Then for RREF, directly verify both ranks equal K = number of non-zero rows (= number of pivot positions).
+    </div>
+
+    <div class="box intuition">
+      <div class="box-label">🧠 Why This is Surprising and Deep</div>
+      The row space lives in ℝᴺ and the column space lives in ℝᴹ — they're in completely different spaces! Yet they always have the same dimension. This non-obvious fact is the heart of the <em>rank-nullity theorem</em> you'll use constantly in econometrics (for rank conditions in GMM/IV identification).
+    </div>
+
+    <div class="box example">
+      <div class="box-label">📘 Quick Example</div>
+      <div class="math-block">
+        A = | 1  2  3 |
+            | 4  5  6 |
+            | 7  8  9 |
+      </div>
+      Row 3 = 2×Row 2 − Row 1, so the rows are dependent. Row rank = 2. And sure enough, the column rank is also 2 (columns 1 and 2 are independent; column 3 = 2×col2 − col1). Rank(A) = 2.
+    </div>
+
+    <div class="box theorem">
+      <div class="box-label">⭐ Connection to Solvability</div>
+      The equation Ax = y has a solution <em>if and only if</em> y lies in the column space of A. The rank tells you the dimension of that column space — i.e., how many "directions" in ℝᴹ the matrix A can "reach."
+    </div>
+  </div>
+
+  <div style="text-align:right; margin-top:8px;">
+    <button class="btn gold" onclick="goTo(7)">Take the Quiz! →</button>
+  </div>
+</div>
+
+<!-- ===== SECTION 7: QUIZ ===== -->
+<div class="section" id="sec7">
+  <div class="card">
+    <div class="card-title">📝 Quiz — Lecture 1 Mastery Check</div>
+    <div class="score-display" id="score-display">Score: 0 / 0</div>
+    <div id="quiz-container"></div>
+  </div>
+</div>
+
+</div><!-- end main -->
+
+<script>
+// === NAVIGATION ===
+const sections = document.querySelectorAll('.section');
+const navBtns = document.querySelectorAll('.nav button');
+const progressLabels = [
+  'Section 1 of 8 · Overview',
+  'Section 2 of 8 · Gaussian Elimination',
+  'Section 3 of 8 · Matrix Notation',
+  'Section 4 of 8 · Row Operations',
+  'Section 5 of 8 · Vector Spaces',
+  'Section 6 of 8 · Independence & Bases',
+  'Section 7 of 8 · Rank Theorem',
+  'Section 8 of 8 · Quiz'
+];
+const progressPcts = [12, 25, 38, 50, 62, 75, 88, 100];
+
+function goTo(idx) {
+  sections.forEach((s, i) => s.classList.toggle('active', i === idx));
+  navBtns.forEach((b, i) => b.classList.toggle('active', i === idx));
+  document.getElementById('progress-bar').style.width = progressPcts[idx] + '%';
+  document.getElementById('progress-label').textContent = progressLabels[idx];
+  window.scrollTo({top: 0, behavior: 'smooth'});
+  if (idx === 7) initQuiz();
+}
+
+// === GAUSSIAN ELIMINATION VISUALIZER ===
+const gaussSteps = [
+  {
+    matrix: [[3,2,1],[6,4,2],[6,8,5]],
+    highlights: [],
+    desc: "Start: A = [[3,2,1],[6,4,2],[6,8,5]]. We want to eliminate entries below the first pivot."
+  },
+  {
+    matrix: [[3,2,1],[0,0,0],[0,4,3]],
+    highlights: [[1,0],[2,0]],
+    desc: "Step 1: R₂ → R₂ − 2R₁ (eliminates the 6 in row 2). R₃ → R₃ − 2R₁ (eliminates the 6 in row 3). Now column 1 below the pivot is all zeros."
+  },
+  {
+    matrix: [[1,'2/3','1/3'],[0,0,0],[0,4,3]],
+    highlights: [[0,0]],
+    desc: "Step 2: R₁ → (1/3)R₁ to make the leading entry 1. Now swap R₂ and R₃ to move the zero row to the bottom."
+  },
+  {
+    matrix: [[1,'2/3','1/3'],[0,4,3],[0,0,0]],
+    highlights: [[1,1]],
+    desc: "Step 3: After swap, R₂ = [0,4,3]. Next pivot is in column 2. R₂ → (1/4)R₂ to normalize."
+  },
+  {
+    matrix: [[1,'2/3','1/3'],[0,1,'3/4'],[0,0,0]],
+    highlights: [[1,1]],
+    desc: "Step 4: Now eliminate the 2/3 in row 1 above the new pivot. R₁ → R₁ − (2/3)R₂."
+  },
+  {
+    matrix: [[1,0,'−1/6'],[0,1,'3/4'],[0,0,0]],
+    highlights: [[0,1],[1,1]],
+    desc: "DONE! This is Row Reduced Echelon Form (RREF). Two pivots (columns 1 and 2). Column 3 is free. Rank = 2."
+  }
+];
+let gaussIdx = 0;
+
+function renderMatrix(matrix, highlights) {
+  let html = '<table class="matrix-table" style="margin:0 auto;">';
+  matrix.forEach((row, r) => {
+    html += '<tr>';
+    row.forEach((val, c) => {
+      const isHighlight = highlights.some(h => h[0]===r && h[1]===c);
+      const isPivot = (val == 1 && !isHighlight);
+      const isZero = (val == 0);
+      let cls = isHighlight ? 'highlight' : isPivot ? 'pivot' : isZero ? 'zero' : '';
+      html += `<td class="${cls}">${val}</td>`;
+    });
+    html += '</tr>';
+  });
+  html += '</table>';
+  return html;
+}
+
+function gaussReset() {
+  gaussIdx = 0;
+  renderGauss();
+}
+
+function gaussStep(dir) {
+  gaussIdx = Math.max(0, Math.min(gaussSteps.length - 1, gaussIdx + dir));
+  renderGauss();
+}
+
+function renderGauss() {
+  const step = gaussSteps[gaussIdx];
+  document.getElementById('gauss-vis').innerHTML = renderMatrix(step.matrix, step.highlights);
+  document.getElementById('gauss-desc-text').textContent = step.desc;
+  document.getElementById('gauss-prev').disabled = gaussIdx === 0;
+  document.getElementById('gauss-next').disabled = gaussIdx === gaussSteps.length - 1;
+}
+
+// Initialize on load
+window.addEventListener('DOMContentLoaded', () => renderGauss());
+
+// === QUIZ ===
+const questions = [
+  {
+    q: "What are the three elementary row operations Bewley defines?",
+    options: [
+      "Scale a row, swap two rows, add a multiple of one row to another",
+      "Add rows, subtract rows, multiply rows",
+      "Transpose, invert, scale",
+      "Pivot, eliminate, reduce"
+    ],
+    correct: 0,
+    explanation: "Correct! Bewley's three operations are: (a) multiply a row by a non-zero scalar, (b) interchange two rows, (c) replace a row by itself plus c times another row. These are the legal moves in Gaussian elimination."
+  },
+  {
+    q: "If A is a 3×7 matrix (3 rows, 7 columns) and y = 0, what does Lemma 1.1 guarantee?",
+    options: [
+      "Ax = 0 has only the zero solution",
+      "Ax = 0 has a non-zero solution",
+      "The rank of A is 7",
+      "A is invertible"
+    ],
+    correct: 1,
+    explanation: "Correct! Lemma 1.1 says: if M < N (here 3 < 7), then Ax = 0 has a non-zero solution. Fewer equations than unknowns → the system is underdetermined → infinitely many solutions exist."
+  },
+  {
+    q: "The vectors (1,0,0), (0,1,0), and (1,1,0) in ℝ³ are:",
+    options: [
+      "Linearly independent — they span all of ℝ³",
+      "Linearly dependent — (1,1,0) = (1,0,0) + (0,1,0)",
+      "A basis for ℝ³",
+      "Linearly independent but don't span ℝ³"
+    ],
+    correct: 1,
+    explanation: "Correct! Bewley's own example: (1,0,0) + (0,1,0) − (1,1,0) = (0,0,0). Since we can write a non-trivial zero combination, the vectors are linearly dependent. Three vectors in ℝ³ are a basis only if they're independent."
+  },
+  {
+    q: "A basis for a vector space V must be:",
+    options: [
+      "Any large collection of vectors",
+      "A set of independent vectors that span V",
+      "The standard unit vectors e₁, e₂, …, eₙ only",
+      "A set of N+1 vectors for an N-dimensional space"
+    ],
+    correct: 1,
+    explanation: "Correct! A basis is exactly: (1) linearly independent AND (2) spans V. Two conditions. Corollary 1.7 shows all bases of a finite-dimensional V have the same size — that size is the dimension dim V."
+  },
+  {
+    q: "What does the Rank Theorem (Theorem 1.18) say?",
+    options: [
+      "The row rank of a matrix is always larger than its column rank",
+      "Row rank and column rank of any matrix are always equal",
+      "Only square matrices have equal row and column rank",
+      "The rank equals the number of rows"
+    ],
+    correct: 1,
+    explanation: "Correct! Row rank = column rank for ANY matrix, regardless of shape. This is a deep and surprising result — the row space and column space live in completely different spaces, yet have the same dimension. This common number is simply called the rank of A."
+  },
+  {
+    q: "In RREF, what is true about columns that contain leading 1s (pivot columns)?",
+    options: [
+      "All entries in the column are 1",
+      "Only the leading entry is non-zero; all other entries in that column are 0",
+      "The column must have all zeros except the diagonal",
+      "There are no restrictions on other entries in pivot columns"
+    ],
+    correct: 1,
+    explanation: "Correct! In a row reduced matrix, each column containing a leading entry (a leading 1) has ALL other entries equal to 0. This is what makes RREF so useful — you can read solutions directly."
+  },
+  {
+    q: "If V is a 4-dimensional vector space and you have 4 vectors that are linearly independent, what can you conclude?",
+    options: [
+      "Nothing — you need to check if they span V separately",
+      "They form a basis for V (they automatically span V)",
+      "They span V only if they are also orthogonal",
+      "You need at least 5 vectors to form a basis"
+    ],
+    correct: 1,
+    explanation: "Correct! Corollary 1.11: in an N-dimensional space, any N independent vectors automatically span V and therefore form a basis. You only need to verify independence — spanning is free!"
+  },
+  {
+    q: "When does the system Ax = y have NO solution?",
+    options: [
+      "When A is a square matrix",
+      "When rank(A) = rank(A:y)",
+      "When after Gaussian elimination on (A:y), a row gives 0 = c for some c ≠ 0",
+      "When A has more columns than rows"
+    ],
+    correct: 2,
+    explanation: "Correct! After Gaussian elimination on the augmented matrix (A:y), if any row reduces to [0 0 … 0 | c] with c ≠ 0, that equation says 0 = c — a contradiction. The system has no solution. If all such rows give 0 = 0, solutions exist."
+  }
+];
+
+let quizAnswered = [];
+let quizScore = 0;
+let quizInitialized = false;
+
+function initQuiz() {
+  if (quizInitialized) return;
+  quizInitialized = true;
+  quizAnswered = new Array(questions.length).fill(false);
+  quizScore = 0;
+  renderQuiz(0);
+}
+
+function renderQuiz(qIdx) {
+  if (qIdx >= questions.length) {
+    document.getElementById('quiz-container').innerHTML = `
+      <div class="box theorem" style="text-align:center; padding:32px;">
+        <div class="box-label">🎉 Quiz Complete!</div>
+        <p style="font-size:22px; margin:16px 0;"><strong>Final Score: ${quizScore} / ${questions.length}</strong></p>
+        <p>${quizScore === questions.length ? "Perfect score! You've mastered Lecture 1! 🏆" :
+           quizScore >= 6 ? "Great work! Solid understanding of the material." :
+           "Review the sections above and try again. Mathematics takes repetition!"}</p>
+        <button class="btn" style="margin-top:20px;" onclick="quizRetry()">Try Again</button>
+        <button class="btn secondary" style="margin-top:20px; margin-left:10px;" onclick="goTo(1)">Review Lecture</button>
+      </div>`;
+    return;
+  }
+  const q = questions[qIdx];
+  const html = `
+    <div style="margin-bottom:12px; color:var(--muted); font-size:13px; font-family:Arial;">Question ${qIdx+1} of ${questions.length}</div>
+    <div class="quiz-q">${q.q}</div>
+    <div class="quiz-options">
+      ${q.options.map((opt, i) => `
+        <button class="quiz-option" id="opt-${qIdx}-${i}" onclick="answerQuiz(${qIdx},${i})">${opt}</button>
+      `).join('')}
+    </div>
+    <div class="quiz-feedback" id="feedback-${qIdx}"></div>
+    <div class="quiz-next" id="next-${qIdx}">
+      <button class="btn" onclick="renderQuiz(${qIdx+1})">${qIdx === questions.length-1 ? 'See Results →' : 'Next Question →'}</button>
+    </div>
+  `;
+  document.getElementById('quiz-container').innerHTML = html;
+}
+
+function answerQuiz(qIdx, chosen) {
+  if (quizAnswered[qIdx]) return;
+  quizAnswered[qIdx] = true;
+  const q = questions[qIdx];
+  const isCorrect = chosen === q.correct;
+  if (isCorrect) quizScore++;
+  document.getElementById('score-display').textContent = `Score: ${quizScore} / ${quizAnswered.filter(Boolean).length}`;
+
+  // Color options
+  for (let i = 0; i < q.options.length; i++) {
+    const btn = document.getElementById(`opt-${qIdx}-${i}`);
+    if (i === q.correct) btn.classList.add('correct');
+    else if (i === chosen && !isCorrect) btn.classList.add('wrong');
+    btn.disabled = true;
+  }
+
+  // Show feedback
+  const fb = document.getElementById(`feedback-${qIdx}`);
+  fb.classList.add('show', isCorrect ? 'correct-fb' : 'wrong-fb');
+  fb.innerHTML = `<strong>${isCorrect ? '✓ Correct!' : '✗ Not quite.'}</strong> ${q.explanation}`;
+
+  // Show next button
+  document.getElementById(`next-${qIdx}`).classList.add('show');
+}
+
+function quizRetry() {
+  quizInitialized = false;
+  document.getElementById('score-display').textContent = 'Score: 0 / 0';
+  initQuiz();
+}
+</script>
+</body>
+</html>
